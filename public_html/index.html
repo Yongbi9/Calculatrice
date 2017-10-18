@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Calculatrice</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script type="text/javascript">
+            var operande_gauche = null;
+            var operateur = null;
+                      
+            function afficheur()
+            {
+                return document.calculatrice.calc;
+            }
+            
+            function saisie(touche)
+            {
+                afficheur().value += touche;
+            }
+            
+            function operation(touche)
+            {
+                switch (touche)
+                {
+                    case '+' :
+                    case '-' :
+                    case '*' :
+                    case '/' :
+                    
+                        if(operateur != null && operande_gauche != null)
+                        {
+                            resultat();
+                        }
+                        operateur = touche;                
+                        operande_gauche = parseFloat(afficheur().value);            
+                        afficheur().value = '';
+
+                        break;
+                    
+                    case '=' :
+                        resultat();
+                        break;
+                        
+                }
+            }
+            
+            function resultat()
+            {
+                if(operande_gauche == null)
+                {
+                    erreur('Premier opérande inconnue');
+                    return;
+                }
+                
+                if(afficheur().value == '')
+                {
+                    erreur('Seconde opérande inconnue');
+                    return;
+                }
+                
+                var operande_droite = parseFloat(afficheur().value);
+                var res = null;
+                
+                switch (operateur)
+                {
+                    case '+' :
+                        res = operande_gauche + operande_droite;
+                        break;
+                    case '-' :
+                        res = operande_gauche - operande_droite;
+                        break;
+                    case '*' :
+                        res = operande_gauche * operande_droite;
+                        break;
+                    case '/' :
+                        res = operande_gauche / operande_droite;
+                        if( operande_droite != 0 ) {
+                            res = Math.round(res*1000000000000)/1000000000000;
+                        }
+                        break;
+                    default :
+                        erreur("Pas d'operation à realiser");
+                        return;
+                }
+                
+                afficheur().value = res;
+                
+                operande_gauche = null;
+                operateur = null;
+            }
+            
+            function erreur(msg)
+            {
+                alert(msg);
+            }
+            
+            
+            document.addEventListener('keydown',handler, false);
+            
+            function handler(e)
+            {
+                var keyCode = e.keyCode;
+                var touche = null;
+                
+                switch (keyCode){
+                    case 96 :
+                        touche = 0;
+                        break;
+                    case 97 :
+                        touche = 1;
+                        break; 
+                    case 98 :
+                        touche = 2;
+                        break; 
+                    case 99 :
+                        touche = 3;
+                        break; 
+                    case 100 :
+                        touche = 4;
+                        break; 
+                    case 101 :
+                        touche = 5;
+                        break; 
+                    case 102 :
+                        touche = 6;
+                        break; 
+                    case 103 :
+                        touche = 7;
+                        break;
+                    case 104 :
+                        touche = 8;
+                        break;
+                    case 105 :
+                        touche = 9;
+                        break;
+                    case 8 :
+                        touche = -1;
+                        break;
+                    case 110 :
+                        touche = '.';
+                        break;
+                    case 107 :
+                        touche = '+';
+                        break;
+                    case 109 :
+                        touche = '-';
+                        break;
+                    case 106 :
+                        touche = '*';
+                        break;
+                    case 111 :
+                        touche = '/';
+                        break;
+                    case 187 :
+                        touche = '=';
+                        break;
+                    case 13 :
+                        touche = '=';
+                        break;
+                    default:
+                        return;
+                }
+                
+                var claviers = "0123456789.";
+                var operateurs = "+-*/=";
+                
+                if(claviers.indexOf(touche) != -1)
+                {   
+                    afficheur().value += touche;
+                }
+                
+                else if(operateurs.indexOf(touche) != -1)
+                {
+                    operation(touche);
+                }
+                
+                else if(touche == -1){
+                    operande_gauche = null;
+                    operande_droite = null;
+                    operateur = null;
+                    afficheur().value = '';
+                }
+                else{
+                    erreur('Cette touche n\'est pas autorisée');
+                    return;
+                }
+                
+            }
+            
+        </script>
+    </head>
+    <body>
+        
+        <form name="calculatrice">
+            <div id="calculator">
+                <input type="text" id="calc" name="calc" value="" readonly="readonly" autocomplete="off"/>
+
+                <div id="keypad">
+                    <input type="button" value="7" class="num btn" onclick="saisie(7);">
+                    <input type="button" value="8" class="num btn" onclick="saisie(8);">
+                    <input type="button" value="9" class="num btn" onclick="saisie(9);">
+                    <input type="button" value="÷" class="com btn" onclick="operation('/');">
+                    <input type="button" value="4" class="num btn" onclick="saisie(4);">
+                    <input type="button" value="5" class="num btn" onclick="saisie(5);">
+                    <input type="button" value="6" class="num btn" onclick="saisie(6);">
+                    <input type="button" value="x" class="com btn" onclick="operation('*');">
+                    <input type="button" value="3" class="num btn" onclick="saisie(3);">
+                    <input type="button" value="2" class="num btn" onclick="saisie(2);">
+                    <input type="button" value="1" class="num btn" onclick="saisie(1);">
+                    <input type="button" value="-" class="com btn" onclick="operation('-');">
+                    <input type="button" value="0" class="num btn" onclick="saisie(0);">
+                    <input type="button" value="." class="com btn" onclick="saisie('.');">
+                    <input type="button" value="=" class="com btn" onclick="operation('=');">
+                    <input type="button" value="+" class="com btn" onclick="operation('+');">
+                </div>
+            </div>
+        </form>
+        
+    </body>
+</html>
