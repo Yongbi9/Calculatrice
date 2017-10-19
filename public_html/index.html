@@ -12,8 +12,7 @@ and open the template in the editor.
         
         <link rel="stylesheet" type="text/css" href="style.css">
         <script type="text/javascript">
-            var operande_gauche = null;
-            var operateur = null;
+            var calcul = null;
                       
             function afficheur()
             {
@@ -33,15 +32,15 @@ and open the template in the editor.
                     case '-' :
                     case '*' :
                     case '/' :
-                    
-                        if(operateur != null && operande_gauche != null)
-                        {
-                            resultat();
+                
+                        if(calcul != null){
+                            calcul += afficheur().value+touche;
                         }
-                        operateur = touche;                
-                        operande_gauche = parseFloat(afficheur().value);            
+                        else{
+                            calcul = afficheur().value+touche;
+                        }
+                        
                         afficheur().value = '';
-
                         break;
                     
                     case '=' :
@@ -53,54 +52,25 @@ and open the template in the editor.
             
             function resultat()
             {
-                if(operande_gauche == null)
+                if(calcul == null)
                 {
-                    erreur('Premier opérande inconnue');
+                    afficheur().value = '';
+                    erreur('Operande(s) et/ou operateur(s) inconnu(s)');
                     return;
                 }
                 
-                if(afficheur().value == '')
-                {
-                    erreur('Seconde opérande inconnue');
-                    return;
-                }
-                
-                var operande_droite = parseFloat(afficheur().value);
-                var res = null;
-                
-                switch (operateur)
-                {
-                    case '+' :
-                        res = operande_gauche + operande_droite;
-                        break;
-                    case '-' :
-                        res = operande_gauche - operande_droite;
-                        break;
-                    case '*' :
-                        res = operande_gauche * operande_droite;
-                        break;
-                    case '/' :
-                        res = operande_gauche / operande_droite;
-                        if( operande_droite != 0 ) {
-                            res = Math.round(res*1000000000000)/1000000000000;
-                        }
-                        break;
-                    default :
-                        erreur("Pas d'operation à realiser");
-                        return;
-                }
+                calcul += afficheur().value;
+                var res = eval(calcul);
+                res = Math.round(res*10000000000)/10000000000;
                 
                 afficheur().value = res;
-                
-                operande_gauche = null;
-                operateur = null;
+                calcul = null;
             }
             
             function erreur(msg)
             {
                 alert(msg);
             }
-            
             
             document.addEventListener('keydown',handler, false);
             
@@ -182,12 +152,12 @@ and open the template in the editor.
                 }
                 
                 else if(touche == -1){
-                    operande_gauche = null;
-                    operande_droite = null;
-                    operateur = null;
+                    calcul = null;
                     afficheur().value = '';
                 }
                 else{
+                    calcul = null;
+                    afficheur().value = '';
                     erreur('Cette touche n\'est pas autorisée');
                     return;
                 }
